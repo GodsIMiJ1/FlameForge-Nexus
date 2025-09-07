@@ -317,6 +317,17 @@ const WorkbenchCanvasInner = () => {
           showFitView={true}
           showInteractive={true}
         />
+
+        {/* Help overlay for node deletion */}
+        <div className="absolute top-4 right-4 z-20 bg-background/90 backdrop-blur-sm border rounded-lg p-3 text-xs text-muted-foreground max-w-xs">
+          <div className="font-medium mb-2">💡 Quick Tips:</div>
+          <div className="space-y-1">
+            <div>• Click nodes to select them</div>
+            <div>• Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Delete</kbd> or <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Backspace</kbd> to remove</div>
+            <div>• Hold <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl</kbd> for multi-select</div>
+            <div>• Drag from sidebar to add nodes</div>
+          </div>
+        </div>
         <MiniMap
           className="workbench-minimap"
           maskColor="hsl(215 25% 8% / 0.8)"
