@@ -1,4 +1,4 @@
-import { useCallback, useRef, DragEvent } from 'react';
+import { useCallback, useRef, DragEvent, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -13,6 +13,8 @@ import {
   BackgroundVariant,
   useReactFlow,
   ReactFlowProvider,
+  NodeChange,
+  EdgeChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -131,6 +133,47 @@ const WorkbenchCanvasInner = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
+
+  // Handle keyboard shortcuts for node deletion
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Delete selected nodes when Delete or Backspace is pressed
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        const selectedNodes = nodes.filter(node => node.selected);
+        const selectedEdges = edges.filter(edge => edge.selected);
+
+        if (selectedNodes.length > 0 || selectedEdges.length > 0) {
+          event.preventDefault();
+
+          // Remove selected nodes
+          if (selectedNodes.length > 0) {
+            const selectedNodeIds = selectedNodes.map(node => node.id);
+            setNodes(nodes => nodes.filter(node => !selectedNodeIds.includes(node.id)));
+
+            // Also remove edges connected to deleted nodes
+            setEdges(edges => edges.filter(edge =>
+              !selectedNodeIds.includes(edge.source) &&
+              !selectedNodeIds.includes(edge.target)
+            ));
+          }
+
+          // Remove selected edges
+          if (selectedEdges.length > 0) {
+            const selectedEdgeIds = selectedEdges.map(edge => edge.id);
+            setEdges(edges => edges.filter(edge => !selectedEdgeIds.includes(edge.id)));
+          }
+        }
+      }
+    };
+
+    // Add event listener to document
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [nodes, edges, setNodes, setEdges]);
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -252,6 +295,9 @@ const WorkbenchCanvasInner = () => {
         fitView
         className="workbench-flow relative z-10"
         proOptions={{ hideAttribution: true }}
+        deleteKeyCode={['Delete', 'Backspace']}
+        multiSelectionKeyCode={['Meta', 'Ctrl']}
+        selectionKeyCode={null}
         defaultEdgeOptions={{
           type: 'smoothstep',
           animated: true,
