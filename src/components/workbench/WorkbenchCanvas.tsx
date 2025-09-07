@@ -1,4 +1,4 @@
-import { useCallback, useRef, DragEvent, useEffect } from 'react';
+import { useCallback, useRef, DragEvent, useEffect, useState } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -16,6 +16,8 @@ import {
   NodeChange,
   EdgeChange,
 } from '@xyflow/react';
+import { Play } from 'lucide-react';
+import { WorkflowExecutionModal } from './WorkflowExecutionModal';
 import '@xyflow/react/dist/style.css';
 
 import { AgentNode } from './nodes/AgentNode';
@@ -131,6 +133,7 @@ const initialEdges: Edge[] = [
 const WorkbenchCanvasInner = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [isExecutionModalOpen, setIsExecutionModalOpen] = useState(false);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -318,6 +321,17 @@ const WorkbenchCanvasInner = () => {
           showInteractive={true}
         />
 
+        {/* Execution Button */}
+        <div className="absolute top-4 left-4 z-20">
+          <button
+            onClick={() => setIsExecutionModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl"
+          >
+            <Play className="w-4 h-4" />
+            <span className="font-medium">Execute Workflow</span>
+          </button>
+        </div>
+
         {/* Help overlay for node deletion */}
         <div className="absolute top-4 right-4 z-20 bg-background/90 backdrop-blur-sm border rounded-lg p-3 text-xs text-muted-foreground max-w-xs">
           <div className="font-medium mb-2">💡 Quick Tips:</div>
@@ -326,8 +340,18 @@ const WorkbenchCanvasInner = () => {
             <div>• Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Delete</kbd> or <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Backspace</kbd> to remove</div>
             <div>• Hold <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl</kbd> for multi-select</div>
             <div>• Drag from sidebar to add nodes</div>
+            <div>• Click <kbd className="px-1 py-0.5 bg-purple-600 text-white rounded text-xs">Execute</kbd> to run workflow</div>
           </div>
         </div>
+
+        {/* Workflow Execution Modal */}
+        <WorkflowExecutionModal
+          isOpen={isExecutionModalOpen}
+          onClose={() => setIsExecutionModalOpen(false)}
+          nodes={nodes}
+          edges={edges}
+          onExecutionUpdate={(data) => console.log('Execution update:', data)}
+        />
         <MiniMap
           className="workbench-minimap"
           maskColor="hsl(215 25% 8% / 0.8)"
