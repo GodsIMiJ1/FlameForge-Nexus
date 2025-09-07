@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FlameForge Workbench Design System - Professional Dark Theme
+All colors MUST be HSL for consistency.
+*/
+
+@layer base {
+  :root {
+    /* Base Workbench Colors - Dark Professional Theme */
+    --background: 215 25% 8%;
+    --foreground: 213 31% 91%;
+
+    --card: 215 25% 10%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 215 25% 10%;
+    --popover-foreground: 213 31% 91%;
+
+    /* FlameForge Brand Colors */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 91% 70%;
+
+    --secondary: 215 25% 14%;
+    --secondary-foreground: 213 31% 91%;
+
+    --muted: 215 25% 12%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 142 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 25% 18%;
+    --input: 215 25% 14%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    /* Workbench Specific Colors */
+    --workbench-canvas: 215 25% 6%;
+    --workbench-sidebar: 215 25% 12%;
+    --workbench-toolbar: 215 25% 10%;
+    
+    /* Node Colors */
+    --node-agent: 217 91% 60%;
+    --node-agent-glow: 217 91% 70%;
+    --node-tool: 142 70% 50%;
+    --node-tool-glow: 142 70% 60%;
+    --node-data: 280 65% 60%;
+    --node-data-glow: 280 65% 70%;
+    --node-decision: 45 93% 47%;
+    --node-decision-glow: 45 93% 57%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(142 70% 50%), hsl(142 70% 60%));
+    --gradient-canvas: linear-gradient(180deg, hsl(215 25% 6%), hsl(215 25% 4%));
+    
+    /* Shadows & Effects */
+    --shadow-node: 0 4px 20px hsl(215 25% 2% / 0.8);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+    --shadow-sidebar: 2px 0 10px hsl(215 25% 2% / 0.5);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Sidebar Variables */
+    --sidebar-background: 215 25% 12%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 14%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 215 25% 18%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    /* Dark mode uses the same values - workbench is dark by design */
+    --background: 215 25% 8%;
+    --foreground: 213 31% 91%;
+    --card: 215 25% 10%;
+    --card-foreground: 213 31% 91%;
+    --popover: 215 25% 10%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 14%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 215 25% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 142 70% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 25% 18%;
+    --input: 215 25% 14%;
+    --ring: 217 91% 60%;
+    --sidebar-background: 215 25% 12%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 14%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 215 25% 18%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* React Flow Workbench Styles */
+.workbench-flow {
+  background: var(--gradient-canvas);
+}
+
+.workbench-flow .react-flow__background {
+  background: var(--gradient-canvas);
+}
+
+.workbench-flow .react-flow__edge {
+  stroke: hsl(var(--border));
+  stroke-width: 2px;
+}
+
+.workbench-flow .react-flow__edge.animated {
+  stroke: hsl(var(--primary));
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+.workbench-flow .react-flow__edge.selected {
+  stroke: hsl(var(--primary));
+}
+
+.workbench-controls {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+}
+
+.workbench-controls button {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.workbench-controls button:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.workbench-minimap {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* Node Handle Animations */
+.react-flow__handle {
+  transition: var(--transition-smooth);
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.2);
+  box-shadow: var(--shadow-glow);
+}
+
+.react-flow__handle.connectionindicator {
+  background: hsl(var(--primary)) !important;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Node Animations */
+.react-flow__node {
+  transition: var(--transition-smooth);
+}
+
+.react-flow__node:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-node), var(--shadow-glow);
+}
+
+.react-flow__node.selected {
+  box-shadow: var(--shadow-node), 0 0 0 2px hsl(var(--primary));
+}
