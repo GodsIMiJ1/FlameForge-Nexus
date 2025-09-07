@@ -33,7 +33,7 @@ export class WorkflowExecutionEngine {
 
   // Execute workflow
   async executeWorkflow(workflowId: string, userId: string, nodes: any[], edges: any[], variables: any = {}) {
-    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     
     const context = {
       workflowId,
@@ -188,162 +188,12 @@ export class WorkflowExecutionEngine {
 
   // Register default executors
   registerDefaultExecutors() {
-    // Agent Node Executor
-    this.registerNodeExecutor('agent', async (node: any, context: any) => {
-      const { provider, model, prompt, systemPrompt } = node.data;
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      if (provider === 'ollama') {
-        const response = await fetch('http://localhost:11434/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: model || 'llama2',
-            prompt,
-            system: systemPrompt,
-            stream: false
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Ollama API failed: ${response.statusText}`);
-        }
-        
-        const result = await response.json();
-        return result.response;
-      }
-      
-      // Mock response for other providers
-      return `AI response from ${provider}: Processed "${prompt}"`;
-    });
-
     // Ollama Node Executor
-    this.registerNodeExecutor('ollama', async (node: any, context: any) => {
-      const { model, prompt, systemPrompt, temperature, maxTokens } = node.data;
-      
-      const response = await fetch('http://localhost:11434/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: model || 'llama3.1',
-          prompt,
-          system: systemPrompt,
-          stream: false,
-          options: {
-            temperature: temperature || 0.7,
-            num_predict: maxTokens || 100
-          }
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Ollama API failed: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      return result.response;
-    });
-
-    // Tool Node Executor
-    this.registerNodeExecutor('tool', async (node: any, context: any) => {
-      const { url, method, headers, body } = node.data;
-      
-      const response = await fetch(url, {
-        method: method || 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: body ? JSON.stringify(body) : undefined
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      return await response.json();
-    });
-
-    // Decision Node Executor
-    this.registerNodeExecutor('decision', async (node: any, context: any) => {
-      const { condition, trueValue, falseValue } = node.data;
-      
-      // Simple condition evaluation
-      const result = this.evaluateCondition(condition, context);
-      return result ? trueValue : falseValue;
-    });
-
-    // Data Transform Node Executor
-    this.registerNodeExecutor('transform', async (node: any, context: any) => {
-      const { transformation, inputField, outputField } = node.data;
-      
-      // Get input value
-      const inputValue = this.getNestedValue(context.variables, inputField);
-      
-      // Apply transformation
-      let result = inputValue;
-      switch (transformation) {
-        case 'uppercase':
-          result = String(inputValue).toUpperCase();
-          break;
-        case 'lowercase':
-          result = String(inputValue).toLowerCase();
-          break;
-        case 'json_parse':
-          result = JSON.parse(inputValue);
-          break;
-        case 'json_stringify':
-          result = JSON.stringify(inputValue);
-          break;
-        default:
-          result = inputValue;
-      }
-      
-      return result;
-    });
-  }
-
-  // Register default executors
-  registerDefaultExecutors() {
-    // Agent Node Executor
-    this.registerNodeExecutor('agent', async (node: any, context: any) => {
-      const { provider, model, prompt, systemPrompt } = node.data;
-
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-
-      if (provider === 'ollama') {
-        const response = await fetch('http://localhost:11434/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: model || 'llama2',
-            prompt,
-            system: systemPrompt,
-            stream: false
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`Ollama API failed: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        return result.response;
-      }
-
-      // Mock response for other providers
-      return `AI response from ${provider}: Processed "${prompt}"`;
-    });
-
-    // Ollama Node Executor
-    this.registerNodeExecutor('ollama', async (node: any, context: any) => {
+    this.registerNodeExecutor('ollama', async (node: any) => {
       const { config, inputs } = node.data;
       const { model, systemPrompt, temperature, maxTokens } = config || {};
       const { prompt } = inputs || {};
-
+      
       const response = await fetch('http://localhost:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -358,58 +208,106 @@ export class WorkflowExecutionEngine {
           }
         })
       });
-
+      
       if (!response.ok) {
         throw new Error(`Ollama API failed: ${response.statusText}`);
       }
-
+      
       const result = await response.json();
       return result.response;
     });
 
-    // Tool Node Executor
-    this.registerNodeExecutor('tool', async (node: any, context: any) => {
-      const { url, method, headers, body } = node.data;
-
-      const response = await fetch(url, {
-        method: method || 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers
-        },
-        body: body ? JSON.stringify(body) : undefined
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
-    });
-
-    // Decision Node Executor
-    this.registerNodeExecutor('decision', async (node: any, context: any) => {
-      const { condition, trueValue, falseValue } = node.data;
-
-      // Simple condition evaluation
-      const result = this.evaluateCondition(condition, context);
-      return result ? trueValue : falseValue;
-    });
-
-    // Data Source Node Executor
-    this.registerNodeExecutor('dataSource', async (node: any, context: any) => {
-      const { type, query, connection } = node.data;
-
-      // Mock database response
-      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-
+    // Database Node Executor
+    this.registerNodeExecutor('database', async (node: any) => {
+      const { connectionType, query } = node.data;
+      
+      // Simulate database query execution
+      await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1500));
+      
       return {
-        type: 'database_result',
+        connectionType,
         query,
-        data: [
-          { id: 1, name: 'Sample Data 1', value: Math.random() * 100 },
-          { id: 2, name: 'Sample Data 2', value: Math.random() * 100 }
+        results: [
+          { id: 1, name: 'Sample Record 1', value: Math.random() * 100 },
+          { id: 2, name: 'Sample Record 2', value: Math.random() * 100 }
         ],
+        rowCount: 2,
+        executionTime: Math.round(800 + Math.random() * 1500),
+        timestamp: new Date().toISOString()
+      };
+    });
+
+    // Email Node Executor
+    this.registerNodeExecutor('email', async (node: any) => {
+      const { provider, to, subject } = node.data;
+      
+      // Simulate email sending
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+      
+      const success = Math.random() > 0.1; // 90% success rate
+      
+      if (!success) {
+        throw new Error(`Email delivery failed: ${provider} service temporarily unavailable`);
+      }
+      
+      return {
+        provider,
+        messageId: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        recipients: to?.length || 0,
+        subject,
+        status: 'sent',
+        timestamp: new Date().toISOString()
+      };
+    });
+
+    // Webhook Node Executor
+    this.registerNodeExecutor('webhook', async (node: any) => {
+      const { url, method, payload } = node.data;
+      
+      if (!url) {
+        throw new Error('Webhook URL is required');
+      }
+      
+      // Mock webhook response
+      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+      
+      return {
+        url,
+        method: method || 'POST',
+        status: 200,
+        statusText: 'OK',
+        responseTime: Math.round(500 + Math.random() * 1000),
+        timestamp: new Date().toISOString()
+      };
+    });
+
+    // File Node Executor
+    this.registerNodeExecutor('file', async (node: any) => {
+      const { operation, filePath } = node.data;
+      
+      // Simulate file operation
+      await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
+      
+      return {
+        operation,
+        filePath,
+        success: true,
+        timestamp: new Date().toISOString()
+      };
+    });
+
+    // Scheduler Node Executor
+    this.registerNodeExecutor('scheduler', async (node: any) => {
+      const { scheduleType, scheduleValue } = node.data;
+      
+      // Simulate scheduler setup
+      await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
+      
+      return {
+        scheduleType,
+        scheduleValue,
+        scheduled: true,
+        nextRun: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
         timestamp: new Date().toISOString()
       };
     });
@@ -418,7 +316,6 @@ export class WorkflowExecutionEngine {
   // Helper methods
   evaluateCondition(condition: string, context: any) {
     try {
-      // Simple and safe condition evaluation
       const func = new Function('variables', `return ${condition}`);
       return func(context.variables);
     } catch {

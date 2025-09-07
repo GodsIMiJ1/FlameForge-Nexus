@@ -26,6 +26,11 @@ import { DataSourceNode } from './nodes/DataSourceNode';
 import { DecisionNode } from './nodes/DecisionNode';
 import { OllamaNode } from './nodes/OllamaNode';
 import { AdvancedOllamaNode } from './nodes/AdvancedOllamaNode';
+import { DatabaseNode } from './nodes/DatabaseNode';
+import { EmailNode } from './nodes/EmailNode';
+import { WebhookNode } from './nodes/WebhookNode';
+import { FileNode } from './nodes/FileNode';
+import { SchedulerNode } from './nodes/SchedulerNode';
 import { OllamaEdge } from './edges/OllamaEdge';
 
 const nodeTypes = {
@@ -35,6 +40,11 @@ const nodeTypes = {
   decision: DecisionNode,
   advancedOllama: AdvancedOllamaNode,
   ollama: OllamaNode,
+  database: DatabaseNode,
+  email: EmailNode,
+  webhook: WebhookNode,
+  file: FileNode,
+  scheduler: SchedulerNode,
 };
 
 const edgeTypes = {

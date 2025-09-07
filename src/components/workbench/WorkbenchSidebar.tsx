@@ -1,4 +1,4 @@
-import { Bot, Wrench, Database, GitBranch, Plus, Brain, Zap, Activity } from 'lucide-react';
+import { Bot, Wrench, Database, GitBranch, Plus, Brain, Zap, Activity, Mail, Webhook, File, Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -45,6 +45,41 @@ const nodeTypes = [
     icon: Zap,
     description: 'Enhanced local AI with monitoring',
     color: 'purple-600',
+  },
+  {
+    type: 'database',
+    label: 'Database',
+    icon: Database,
+    description: 'SQL database operations',
+    color: 'blue-500',
+  },
+  {
+    type: 'email',
+    label: 'Email',
+    icon: Mail,
+    description: 'Send emails and notifications',
+    color: 'emerald-500',
+  },
+  {
+    type: 'webhook',
+    label: 'Webhook',
+    icon: Webhook,
+    description: 'HTTP requests and webhooks',
+    color: 'purple-500',
+  },
+  {
+    type: 'file',
+    label: 'File Operations',
+    icon: File,
+    description: 'Read, write, and manage files',
+    color: 'amber-500',
+  },
+  {
+    type: 'scheduler',
+    label: 'Scheduler',
+    icon: Clock,
+    description: 'Schedule and time-based triggers',
+    color: 'indigo-500',
   },
 ];
 
